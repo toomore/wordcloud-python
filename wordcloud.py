@@ -4,31 +4,22 @@ class wordcloud(object):
   def __init__(self, w, l = [2,3,4]):
     self.word = w.decode('utf-8')
     self.l = l
-    self.makelist()
+    self.wordslist = self.makelist(self.word)[:]
     self.calfres = self.calfre()
 
-  def getlens(self):
-    return len(self.word)
-
-  def getwords(self):
-    return self.calwords.keys()
-
-  def cklens(self, l):
-    return len(self.word) >= l
-
-  def makelist(self):
-    self.ml = []
+  def makelist(self, word):
+    ml = []
     for i in self.l:
-      if self.cklens(i):
+      if len(word) >= i:
         add = i
-        while add <= self.getlens():
-          self.ml.append(self.word[0+add-i:add])
+        while add <= len(word):
+          ml.append(word[0+add-i:add])
           add += 1
-    return self.ml
+    return ml
 
   def calfre(self):
     re = {}
-    for i in self.ml:
+    for i in self.wordslist:
       try:
         re[i] += 1
       except KeyError:
@@ -46,3 +37,26 @@ class wordcloud(object):
         re[self.calwords[i]] = []
         re[self.calwords[i]].append(i)
     return re
+
+  def popsamewords(self):
+    x = self.maketimesdict()
+    xkeys = x.keys()
+    xkeys.reverse()
+    for i in xkeys:
+      print i
+
+      if i == 1:
+        x.pop(i)
+      else:
+        if len(x[i]) > 1:
+          for s in x[i]:
+            mkl = self.makelist(s)
+            for d in mkl[:-1]:
+              try:
+                x[i].remove(d)
+              except ValueError:
+                pass
+    try:
+      return x
+    except KeyError:
+      pass
